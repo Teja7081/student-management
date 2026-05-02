@@ -9,7 +9,6 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
-import java.sql.SQLException;
 import java.util.regex.Pattern;
 
 public class StudentServlet extends HttpServlet {
@@ -26,33 +25,29 @@ public class StudentServlet extends HttpServlet {
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
         String action = request.getParameter("action");
-        try {
-            if (action == null) {
-                listStudents(request, response);
-            } else {
-                switch (action) {
-                    case "new":
-                        showNewForm(request, response);
-                        break;
-                    case "insert":
-                        insertStudent(request, response);
-                        break;
-                    case "delete":
-                        deleteStudent(request, response);
-                        break;
-                    case "edit":
-                        showEditForm(request, response);
-                        break;
-                    case "update":
-                        updateStudent(request, response);
-                        break;
-                    default:
-                        listStudents(request, response);
-                        break;
-                }
+        if (action == null) {
+            listStudents(request, response);
+        } else {
+            switch (action) {
+                case "new":
+                    showNewForm(request, response);
+                    break;
+                case "insert":
+                    insertStudent(request, response);
+                    break;
+                case "delete":
+                    deleteStudent(request, response);
+                    break;
+                case "edit":
+                    showEditForm(request, response);
+                    break;
+                case "update":
+                    updateStudent(request, response);
+                    break;
+                default:
+                    listStudents(request, response);
+                    break;
             }
-        } catch (SQLException ex) {
-            throw new ServletException(ex);
         }
     }
 
@@ -63,7 +58,7 @@ public class StudentServlet extends HttpServlet {
     }
 
     private void listStudents(HttpServletRequest request, HttpServletResponse response)
-            throws SQLException, ServletException, IOException {
+            throws ServletException, IOException {
         request.setAttribute("studentList", studentDAO.listAllStudents());
         RequestDispatcher dispatcher = request.getRequestDispatcher("student-list.jsp");
         dispatcher.forward(request, response);
@@ -78,7 +73,7 @@ public class StudentServlet extends HttpServlet {
     }
 
     private void showEditForm(HttpServletRequest request, HttpServletResponse response)
-            throws SQLException, ServletException, IOException {
+            throws ServletException, IOException {
         int id = parseIdParameter(request.getParameter("id"));
         Student existingStudent = studentDAO.getStudent(id);
         if (existingStudent == null) {
@@ -93,7 +88,7 @@ public class StudentServlet extends HttpServlet {
     }
 
     private void insertStudent(HttpServletRequest request, HttpServletResponse response)
-            throws SQLException, ServletException, IOException {
+            throws ServletException, IOException {
         String name = request.getParameter("name");
         String email = request.getParameter("email");
         String course = request.getParameter("course");
@@ -115,7 +110,7 @@ public class StudentServlet extends HttpServlet {
     }
 
     private void updateStudent(HttpServletRequest request, HttpServletResponse response)
-            throws SQLException, ServletException, IOException {
+            throws ServletException, IOException {
         int id = parseIdParameter(request.getParameter("id"));
         String name = request.getParameter("name");
         String email = request.getParameter("email");
@@ -138,7 +133,7 @@ public class StudentServlet extends HttpServlet {
     }
 
     private void deleteStudent(HttpServletRequest request, HttpServletResponse response)
-            throws SQLException, IOException {
+            throws IOException {
         int id = parseIdParameter(request.getParameter("id"));
         studentDAO.deleteStudent(id);
         response.sendRedirect("students");
